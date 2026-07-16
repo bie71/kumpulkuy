@@ -160,13 +160,13 @@ export default function LoginScreen() {
             style={[styles.tab, !isRegisterMode && styles.activeTab]}
             onPress={() => switchTab(false)}
           >
-            <Text style={[styles.tabText, !isRegisterMode && styles.activeTabText]}>Login</Text>
+            <Text style={[styles.tabText, !isRegisterMode && styles.activeTabText]}>🔑 Masuk</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.tab, isRegisterMode && styles.activeTab]}
             onPress={() => switchTab(true)}
           >
-            <Text style={[styles.tabText, isRegisterMode && styles.activeTabText]}>Daftar</Text>
+            <Text style={[styles.tabText, isRegisterMode && styles.activeTabText]}>📝 Daftar</Text>
           </TouchableOpacity>
         </View>
 
@@ -273,7 +273,7 @@ export default function LoginScreen() {
           ) : (
             <TouchableOpacity style={styles.btnPrimary} onPress={handleAuth}>
               <Text style={styles.btnPrimaryText}>
-                {isRegisterMode ? 'Daftar Sekarang' : 'Masuk Sekarang'}
+                {isRegisterMode ? '📝 Daftar Sekarang' : '🔑 Masuk Sekarang'}
               </Text>
             </TouchableOpacity>
           )}
@@ -287,7 +287,7 @@ export default function LoginScreen() {
           <Text style={styles.toggleFooterText}>
             {isRegisterMode ? 'Sudah punya akun? ' : 'Belum punya akun? '}
             <Text style={styles.toggleFooterTextBold}>
-              {isRegisterMode ? 'Masuk' : 'Daftar Akun'}
+              {isRegisterMode ? '🔑 Masuk' : '📝 Daftar Akun'}
             </Text>
           </Text>
         </TouchableOpacity>
