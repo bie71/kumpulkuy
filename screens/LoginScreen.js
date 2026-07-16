@@ -3,6 +3,7 @@ import {
     ActivityIndicator,
     Alert,
     Animated,
+    Image,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
@@ -15,6 +16,7 @@ import {
 import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
 import { supabase } from '../lib/supabase';
+import GoogleLogo from '../assets/images/google-logo.png';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -346,15 +348,16 @@ export default function LoginScreen() {
               {/* OR Divider */}
               <View style={styles.dividerRow}>
                 <View style={styles.dividerLine} />
-                <Text style={styles.dividerText}>ATAU</Text>
+                <Text style={styles.dividerText}>ATAU MASUK DENGAN</Text>
                 <View style={styles.dividerLine} />
               </View>
 
-              {/* Google Sign In Button */}
-              <TouchableOpacity style={styles.btnGoogle} onPress={handleGoogleLogin}>
-                <Text style={styles.btnGoogleIcon}>🌐</Text>
-                <Text style={styles.btnGoogleText}>Masuk dengan Google</Text>
-              </TouchableOpacity>
+              {/* Google Sign In Button (Icon Only) */}
+              <View style={styles.socialButtonsContainer}>
+                <TouchableOpacity style={styles.btnGoogleIconOnly} onPress={handleGoogleLogin}>
+                  <Image source={GoogleLogo} style={styles.googleIconImage} />
+                </TouchableOpacity>
+              </View>
             </>
           )}
         </Animated.View>
@@ -594,29 +597,30 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginHorizontal: 12,
   },
-  btnGoogle: {
+  socialButtonsContainer: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#E2E8F0',
-    borderWidth: 1.5,
-    borderRadius: 12,
-    paddingVertical: 14,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 4,
+  },
+  btnGoogleIconOnly: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#E2E8F0',
+    borderWidth: 1.5,
+    justifyContent: 'center',
+    alignItems: 'center',
     shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
-    elevation: 1,
+    elevation: 2,
   },
-  btnGoogleIcon: {
-    fontSize: 18,
-    marginRight: 8,
-  },
-  btnGoogleText: {
-    color: '#334155',
-    fontSize: 16,
-    fontWeight: '700',
+  googleIconImage: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
   },
 });
