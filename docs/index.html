@@ -3,107 +3,981 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bergabung ke KumpulKuy</title>
+    <title>Undangan Meetup KumpulKuy</title>
+    <!-- Google Fonts: Plus Jakarta Sans for premium typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-glow: rgba(79, 70, 229, 0.15);
+            --success: #10B981;
+            --background: #0B0F19;
+            --card-bg: rgba(17, 24, 39, 0.85);
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: var(--background);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.12) 0%, transparent 40%);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #F8FAFC;
-            color: #0F172A;
-            text-align: center;
-            padding: 20px;
+            color: var(--text-main);
+            overflow-x: hidden;
         }
-        .card {
-            background: white;
-            padding: 35px 30px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.05);
-            max-width: 400px;
+
+        /* Container Card for Redirect */
+        .container {
             width: 100%;
-            border: 1px solid #E2E8F0;
+            max-width: 440px;
+            padding: 20px;
+            box-sizing: border-box;
         }
-        .logo {
-            font-size: 48px;
-            margin-bottom: 15px;
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
         }
-        h2 { 
-            color: #4F46E5; 
-            margin: 0 0 10px 0; 
-            font-size: 24px;
+
+        /* Glow effect in background of card */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.06) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Animated Bouncing Marker & Pulse */
+        .marker-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .marker-icon {
+            font-size: 40px;
+            z-index: 2;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        .pulse-ring {
+            position: absolute;
+            width: 40px;
+            height: 12px;
+            background: radial-gradient(ellipse, rgba(79, 70, 229, 0.5) 0%, transparent 70%);
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            animation: pulse-shadow 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        @keyframes pulse-shadow {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+            50% { transform: translateX(-50%) scale(0.6); opacity: 0.3; }
+        }
+
+        /* Branding Text */
+        .app-name {
+            font-size: 26px;
             font-weight: 800;
+            letter-spacing: -0.5px;
+            margin: 0 0 8px 0;
+            background: linear-gradient(to right, #818CF8, #C084FC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        p { 
-            color: #64748B; 
-            font-size: 14px; 
-            line-height: 22px; 
-            margin: 0 0 15px 0;
-        }
-        .status-box {
-            background-color: #F1F5F9;
-            padding: 12px;
-            border-radius: 12px;
+
+        .tagline {
             font-size: 13px;
-            color: #475569;
-            margin-top: 15px;
-            line-height: 18px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin: 0 0 32px 0;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
-        .btn {
-            display: inline-block;
-            margin-top: 20px;
-            background-color: #4F46E5;
-            color: white;
-            padding: 14px 28px;
-            border-radius: 12px;
+
+        /* Status Box */
+        .status-box {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            padding: 16px 20px;
+            font-size: 14px;
+            line-height: 22px;
+            color: #E2E8F0;
+            margin-bottom: 32px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Action Buttons */
+        .btn-primary {
+            display: block;
+            background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
+            color: #FFFFFF;
+            padding: 16px 30px;
+            border-radius: 18px;
             text-decoration: none;
             font-weight: 700;
             font-size: 15px;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
-            transition: background-color 0.2s;
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+            transition: all 0.2s ease-in-out;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .btn:active {
-            background-color: #3730A3;
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+
+        /* Footer Info */
+        .footer-note {
+            margin-top: 30px;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 18px;
+        }
+        
+        .footer-note a {
+            color: #818CF8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* LANDING VIEW STYLES */
+        .landing-container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 40px 24px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #818CF8, #C084FC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--text-main);
+        }
+
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 48px;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                gap: 40px;
+            }
+            body {
+                align-items: flex-start;
+            }
+        }
+
+        .hero-content {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content {
+                align-items: center;
+            }
+        }
+
+        .badge {
+            background-color: rgba(79, 70, 229, 0.12);
+            border: 1px solid rgba(79, 70, 229, 0.25);
+            color: #818CF8;
+            padding: 6px 16px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            display: inline-block;
+        }
+
+        .hero-title {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin: 0 0 20px 0;
+            background: linear-gradient(to right, #FFFFFF, #E2E8F0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 32px;
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0 0 36px 0;
+            font-weight: 500;
+        }
+
+        .cta-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-store {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 12px 22px;
+            color: #FFFFFF;
+            text-decoration: none;
+            transition: all 0.25s ease-in-out;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .btn-store:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .store-icon {
+            color: #818CF8;
+        }
+
+        .store-text {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .store-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .store-name {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .hero-mockup {
+            flex: 0.8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Phone Screen & Mock Map */
+        .phone-frame {
+            width: 270px;
+            height: 540px;
+            border: 8px solid #1E293B;
+            border-radius: 40px;
+            background: #0F172A;
+            position: relative;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px rgba(79, 70, 229, 0.15);
+            overflow: hidden;
+        }
+
+        .phone-notch {
+            width: 120px;
+            height: 20px;
+            background: #1E293B;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: #0B0F19;
+            position: relative;
+        }
+
+        .phone-home-indicator {
+            width: 100px;
+            height: 4px;
+            background: #1E293B;
+            border-radius: 2px;
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .mock-app-bar {
+            background: rgba(17, 24, 39, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 24px 12px 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .mock-app-title {
+            color: #E2E8F0;
+        }
+
+        .mock-app-status {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34D399;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 700;
+        }
+
+        .mock-map {
+            flex: 1;
+            position: relative;
+            background-color: #0F172A;
+            overflow: hidden;
+        }
+
+        .map-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+
+        /* SVG Paths for Routes */
+        .map-routes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .route-line {
+            stroke-dasharray: 6 6;
+            animation: dash 15s linear infinite;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -120;
+            }
+        }
+
+        /* Mock Map Pins */
+        .mock-pin {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .mock-pin-dot {
+            width: 12px;
+            height: 12px;
+            background: #EF4444;
+            border: 2px solid #FFFFFF;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+            animation: pulse-pin 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-pin {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(239, 68, 68, 0.8); }
+            50% { transform: scale(1.25); box-shadow: 0 0 16px rgba(239, 68, 68, 1); }
+        }
+
+        .mock-pin-label {
+            font-size: 7px;
+            font-weight: 800;
+            background: #EF4444;
+            color: #FFFFFF;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-top: 4px;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* Moving Avatars */
+        .mock-user {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 24px;
+            height: 24px;
+            background: #312E81;
+            border: 1.5px solid #818CF8;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 11px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .avatar.you {
+            background: #064E3B;
+            border-color: #34D399;
+        }
+
+        .user-label {
+            font-size: 7px;
+            font-weight: 600;
+            background: rgba(15, 23, 42, 0.85);
+            color: #E2E8F0;
+            padding: 1px 4px;
+            border-radius: 3px;
+            margin-top: 2px;
+            white-space: nowrap;
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Animate users walking along path */
+        @keyframes move-user1 {
+            0%, 100% { transform: translate(-50%, -50%) translate(0, 0); }
+            50% { transform: translate(-50%, -50%) translate(30px, -45px); }
+        }
+
+        @keyframes move-user2 {
+            0%, 100% { transform: translate(-50%, -50%) translate(0, 0); }
+            50% { transform: translate(-50%, -50%) translate(-25px, 30px); }
+        }
+
+        .user-1 {
+            animation: move-user1 8s ease-in-out infinite;
+        }
+
+        .user-2 {
+            animation: move-user2 10s ease-in-out infinite;
+        }
+
+        .mock-bottom-panel {
+            background: rgba(17, 24, 39, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 8px 12px 20px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-handle {
+            width: 36px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+        }
+
+        .panel-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .panel-avatar-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .mini-avatar {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 1px solid #1E293B;
+            background: #1E293B;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 9px;
+            margin-right: -4px;
+        }
+
+        .panel-text {
+            font-size: 9px;
+            font-weight: 700;
+            color: #94A3B8;
+        }
+
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(79, 70, 229, 0.3);
+            box-shadow: 0 20px 40px -15px rgba(79, 70, 229, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 28px;
+            width: 54px;
+            height: 54px;
+            background: rgba(79, 70, 229, 0.12);
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            color: #F8FAFC;
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(to right, #FFFFFF, #E2E8F0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            width: 100%;
+        }
+
+        .step-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 24px;
+            padding: 36px 24px;
+            text-align: center;
+        }
+
+        .step-num {
+            width: 36px;
+            height: 36px;
+            background: #4F46E5;
+            color: #FFFFFF;
+            font-weight: 800;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px auto;
+            font-size: 15px;
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+        }
+
+        .step-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            color: #F8FAFC;
+        }
+
+        .step-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 32px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 40px;
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="logo">📍</div>
-        <h2>KumpulKuy</h2>
-        <p>Membuka aplikasi untuk bergabung ke acara kumpul...</p>
-        
-        <div id="status-msg" class="status-box">
-            Menghubungkan ke aplikasi KumpulKuy di ponsel Anda...
+    <!-- 1. REDIRECT VIEW (Shown when meetup ID is present) -->
+    <div id="redirect-view" class="container" style="display: none;">
+        <div class="card">
+            <div class="content">
+                <!-- Glowing bouncing pin -->
+                <div class="marker-container">
+                    <div class="marker-icon">📍</div>
+                    <div class="pulse-ring"></div>
+                </div>
+
+                <!-- Branding -->
+                <h1 class="app-name">KumpulKuy</h1>
+                <p class="tagline">Lacak & Kumpul Bareng Teman</p>
+                
+                <!-- Dynamic Status Message -->
+                <div class="status-box" id="status-container">
+                    <div class="spinner" id="status-spinner"></div>
+                    <span id="status-text">Membuka aplikasi KumpulKuy...</span>
+                </div>
+                
+                <!-- Primary Action Button -->
+                <a id="btn-redirect" class="btn-primary" href="#">Buka Aplikasi Manual</a>
+                
+                <p class="footer-note">
+                    Belum punya aplikasinya? <br/>
+                    Unduh dan pasang <b>KumpulKuy</b> untuk menikmati pelacakan GPS & rute meetup real-time bersama kawan kumpul Anda.
+                </p>
+            </div>
         </div>
-        
-        <a id="btn-redirect" class="btn" href="#">Buka Aplikasi Manual</a>
+    </div>
+
+    <!-- 2. LANDING VIEW (Shown when meetup ID is absent) -->
+    <div id="landing-view" class="landing-container" style="display: none;">
+        <!-- Navigation Header -->
+        <header class="header">
+            <a href="#" class="logo-container">
+                <span class="logo-icon">📍</span>
+                <span class="logo-text">KumpulKuy</span>
+            </a>
+            <a href="#cara-kerja" class="nav-link">Cara Kerja</a>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="badge">Aplikasi Navigasi & Meetup</div>
+                <h1 class="hero-title">Kumpul Lebih Seru Tanpa Ribet Nyasar</h1>
+                <p class="hero-subtitle">
+                    Pantau posisi kawan kumpul secara real-time di peta interaktif, tentukan rute meetup terbaik, dan obrolkan rencana perjalananmu dalam satu aplikasi.
+                </p>
+                <div class="cta-row">
+                    <a href="#" class="btn-store">
+                        <svg class="store-icon" viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="currentColor" d="M3,5.277L13.46,12L3,18.723C2.52,19.04 2,18.72 2,18.15V5.85C2,5.28 2.52,4.96 3,5.277 M14.15,12.44L17.15,14.44L4.85,21.84L14.15,12.44 M14.15,11.56L4.85,2.16L17.15,9.56L14.15,11.56 M18.15,10.22L21.46,12L18.15,13.78V10.22Z" />
+                        </svg>
+                        <div class="store-text">
+                            <span class="store-label">Dapatkan di</span>
+                            <span class="store-name">Google Play</span>
+                        </div>
+                    </a>
+                    <a href="#" class="btn-store">
+                        <svg class="store-icon" viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="currentColor" d="M18.71,19.5C17.88,20.74 17,21.95 15.66,22C14.32,22.05 13.89,21.24 12.37,21.24C10.84,21.24 10.37,22 9.09,22.05C7.79,22.1 6.8,20.77 5.96,19.58C4.26,17.12 2.97,12.63 4.7,9.62C5.57,8.12 7.1,7.17 8.78,7.14C10.05,7.12 11.24,8 12,8C12.78,8 14.24,6.93 15.78,7.09C16.42,7.12 18.23,7.35 19.42,9.1C19.33,9.16 17.07,10.47 17.1,13.16C17.12,16.39 19.82,17.47 19.85,17.48C19.83,17.53 19.42,18.94 18.71,19.5M15.97,4.86C16.63,4.07 17.07,2.98 16.95,1.87C16,1.91 14.9,2.47 14.25,3.24C13.69,3.89 13.2,5 13.36,6.07C14.4,6.15 15.4,5.55 15.97,4.86Z" />
+                        </svg>
+                        <div class="store-text">
+                            <span class="store-label">Unduh di</span>
+                            <span class="store-name">App Store</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="hero-mockup">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <!-- Header App Mockup -->
+                        <div class="mock-app-bar">
+                            <span class="mock-app-title">📍 Kumpul Sabtu Santai</span>
+                            <span class="mock-app-status">Aktif</span>
+                        </div>
+                        
+                        <!-- Map View Mockup -->
+                        <div class="mock-map">
+                            <!-- Grid lines -->
+                            <div class="map-grid"></div>
+                            
+                            <!-- Destination Pin -->
+                            <div class="mock-pin" style="top: 40%; left: 50%;">
+                                <div class="mock-pin-dot"></div>
+                                <div class="mock-pin-label">Cafe Kopi Senja</div>
+                            </div>
+                            
+                            <!-- Participant 1 -->
+                            <div class="mock-user user-1" style="top: 72%; left: 28%;">
+                                <div class="avatar">👨‍💻</div>
+                                <div class="user-label">Budi</div>
+                            </div>
+                            
+                            <!-- Participant 2 -->
+                            <div class="mock-user user-2" style="top: 22%; left: 74%;">
+                                <div class="avatar">👩‍🎨</div>
+                                <div class="user-label">Siti</div>
+                            </div>
+
+                            <!-- User location -->
+                            <div class="mock-user user-3" style="top: 60%; left: 60%;">
+                                <div class="avatar you">😎</div>
+                                <div class="user-label">Anda</div>
+                            </div>
+                            
+                            <!-- Connecting Routes -->
+                            <svg class="map-routes">
+                                <!-- route 1 (Budi) -->
+                                <path d="M 75,388 C 90,340 100,280 135,216" fill="none" stroke="#818CF8" stroke-width="2" stroke-dasharray="4 4" class="route-line" />
+                                <!-- route 2 (Siti) -->
+                                <path d="M 200,118 C 190,140 170,170 135,216" fill="none" stroke="#C084FC" stroke-width="2" stroke-dasharray="4 4" class="route-line" />
+                                <!-- route 3 (Anda) -->
+                                <path d="M 162,324 L 135,216" fill="none" stroke="#34D399" stroke-width="2" stroke-dasharray="4 4" class="route-line" />
+                            </svg>
+                        </div>
+                        
+                        <!-- Bottom Panel Mockup -->
+                        <div class="mock-bottom-panel">
+                            <div class="panel-handle"></div>
+                            <div class="panel-info">
+                                <div class="panel-avatar-group">
+                                    <span class="mini-avatar">👨‍💻</span>
+                                    <span class="mini-avatar">👩‍🎨</span>
+                                    <span class="mini-avatar">😎</span>
+                                </div>
+                                <div class="panel-text">Semua teman dalam perjalanan</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phone-home-indicator"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="feature-card">
+                <div class="feature-icon">📡</div>
+                <h3 class="feature-title">Real-Time GPS Tracking</h3>
+                <p class="feature-desc">Lacak lokasi teman kumpul secara real-time di peta interaktif. Tidak ada lagi pertanyaan "Kamu di mana?".</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🗺️</div>
+                <h3 class="feature-title">Rute Cerdas</h3>
+                <p class="feature-desc">Tentukan rute meetup optimal dan estimasi jarak menuju titik kumpul dengan praktis.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3 class="feature-title">Obrolan Grup & Notifikasi</h3>
+                <p class="feature-desc">Kirim pesan instan dan terima pengingat meetup otomatis untuk koordinasi yang lebih lancar.</p>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="cara-kerja" class="how-it-works">
+            <h2 class="section-title">Bagaimana Cara Kerjanya?</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-num">1</div>
+                    <h4 class="step-title">Buat Rencana Meetup</h4>
+                    <p class="step-desc">Tentukan judul acara, waktu, dan lokasi titik kumpul di peta lewat aplikasi.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">2</div>
+                    <h4 class="step-title">Undang Teman</h4>
+                    <p class="step-desc">Bagikan link atau QR code undangan agar teman dapat bergabung secara otomatis.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">3</div>
+                    <h4 class="step-title">Kumpul & Pantau</h4>
+                    <p class="step-desc">Lihat pergerakan teman Anda secara real-time menuju lokasi dan nikmati meetup seru.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2026 KumpulKuy. Dibuat dengan ❤️ untuk Kumpul-Kumpul Seru & Bebas Nyasar.</p>
+        </footer>
     </div>
 
     <script>
-        // 1. Ambil ID meetup dari parameter URL (?id=xxxx)
+        // 1. Dapatkan parameter meetup ID dari URL (?id=UUID)
         const urlParams = new URLSearchParams(window.location.search);
         const meetupId = urlParams.get('id');
 
         if (meetupId) {
-            // Tautan tujuan ke custom scheme aplikasi KumpulKuy
+            // Tampilkan view redirect
+            document.getElementById('redirect-view').style.display = 'block';
+
+            // Tautan redirect ke custom scheme aplikasi KumpulKuy
             const appLink = "kumpulkuy://join-meetup?id=" + meetupId;
             
             // Set link ke tombol manual
             document.getElementById('btn-redirect').href = appLink;
 
-            // 2. Coba buka aplikasi secara otomatis
+            // 2. Coba jalankan redirection otomatis
             window.location.replace(appLink);
 
-            // 3. Tampilkan pesan instruksi jika aplikasi tidak terinstal / tidak merespons
+            // 3. Fallback info jika aplikasi tidak merespon/belum terpasang
             setTimeout(() => {
-                document.getElementById('status-msg').innerHTML = 
-                    "Jika aplikasi belum terbuka, pastikan aplikasi <b>KumpulKuy</b> sudah terpasang di HP Anda, atau ketuk tombol manual di atas.";
-            }, 2500);
+                // Sembunyikan spinner loading
+                const spinner = document.getElementById('status-spinner');
+                if (spinner) spinner.style.display = 'none';
+
+                // Update teks status menjadi petunjuk manual
+                document.getElementById('status-text').innerHTML = 
+                    "Jika aplikasi belum terbuka otomatis, pastikan aplikasi <b>KumpulKuy</b> telah terpasang lalu ketuk tombol di atas.";
+            }, 3000);
         } else {
-            document.querySelector('.card').innerHTML = "<h2>⚠️ Error</h2><p>ID Meetup tidak valid atau tidak ditemukan.</p>";
+            // Tampilkan landing page umum
+            document.getElementById('landing-view').style.display = 'block';
         }
     </script>
 </body>

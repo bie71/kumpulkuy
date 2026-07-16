@@ -5,20 +5,20 @@ import {
     Alert,
     Animated,
     Dimensions,
+    Image,
     KeyboardAvoidingView,
+    Modal,
     Platform,
     ScrollView,
+    Share,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
     View,
-    Share,
-    Modal,
-    Image,
 } from 'react-native';
-import * as Linking from 'expo-linking';
 import { WebView } from 'react-native-webview';
+import * as Linking from 'expo-linking';
 import { supabase } from '../lib/supabase';
 
 export default function DetailScreen({ route, navigation }) {
@@ -49,9 +49,18 @@ export default function DetailScreen({ route, navigation }) {
   const webViewRef = useRef(null);
   const scrollViewRef = useRef(null);
 
-  const shareUrl = Linking.createURL('join-meetup', {
-    queryParams: { id: meetup.id },
-  });
+  const getShareUrl = () => {
+    const envUrl = process.env.EXPO_PUBLIC_MEETUP_INVITE_URL;
+    if (envUrl) {
+      const separator = envUrl.endsWith('/') ? '' : '/';
+      return `${envUrl}${separator}?id=${meetup.id}`;
+    }
+    return Linking.createURL('join-meetup', {
+      queryParams: { id: meetup.id },
+    });
+  };
+  const shareUrl = getShareUrl();
+
 
   async function handleShareLink() {
     try {
