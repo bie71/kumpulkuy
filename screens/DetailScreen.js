@@ -2,21 +2,21 @@ import * as Linking from 'expo-linking';
 import * as Location from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Animated,
-    Dimensions,
-    Image,
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    ScrollView,
-    Share,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Animated,
+  Dimensions,
+  Image,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { supabase } from '../lib/supabase';
@@ -28,7 +28,7 @@ export default function DetailScreen({ route, navigation }) {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [participants, setParticipants] = useState([]);
-  
+
   // Chat & Tabs States
   const [activeTab, setActiveTab] = useState('info'); // 'info' atau 'chat'
   const [messages, setMessages] = useState([]);
@@ -271,13 +271,13 @@ export default function DetailScreen({ route, navigation }) {
     const R = 6371; // Radius bumi dalam km
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2)
-      ; 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-    const d = R * c; 
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2)
+      ;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c;
     return d;
   }
 
@@ -333,7 +333,7 @@ export default function DetailScreen({ route, navigation }) {
       });
       if (loc && loc.coords) {
         setMyLocation(loc.coords);
-        
+
         // Simpan ke Supabase jika currentUserId tersedia
         if (currentUserId) {
           await supabase.from('user_locations').upsert({
@@ -758,8 +758,8 @@ export default function DetailScreen({ route, navigation }) {
       {/* In-App Notification Banner */}
       {notification && (
         <Animated.View style={[styles.notificationBanner, { transform: [{ translateY: bannerAnim }] }]}>
-          <TouchableOpacity 
-            style={styles.notificationContent} 
+          <TouchableOpacity
+            style={styles.notificationContent}
             activeOpacity={0.9}
             onPress={() => {
               setActiveTab('chat');
@@ -818,11 +818,11 @@ export default function DetailScreen({ route, navigation }) {
       >
         <View style={[styles.overlayPanel, isPanelMinimized && { maxHeight: 75, paddingBottom: 8 }]}>
           <View style={styles.panelHandle} />
-          
+
           {/* Tab Selector & Minimize Toggle */}
           <View style={styles.sheetTabBarContainer}>
             <View style={styles.sheetTabBar}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.sheetTab, activeTab === 'info' && styles.sheetTabActive]}
                 onPress={() => {
                   setActiveTab('info');
@@ -831,7 +831,7 @@ export default function DetailScreen({ route, navigation }) {
               >
                 <Text style={[styles.sheetTabText, activeTab === 'info' && styles.sheetTabTextActive]}>📍 Info & GPS</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.sheetTab, activeTab === 'chat' && styles.sheetTabActive]}
                 onPress={() => {
                   setActiveTab('chat');
@@ -842,7 +842,7 @@ export default function DetailScreen({ route, navigation }) {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.btnTogglePanel}
               onPress={() => setIsPanelMinimized(!isPanelMinimized)}
               activeOpacity={0.7}
@@ -853,7 +853,7 @@ export default function DetailScreen({ route, navigation }) {
 
           {/* Tab Content 1: Info & GPS */}
           {!isPanelMinimized && activeTab === 'info' && (
-            <ScrollView 
+            <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 10 }}
             >
@@ -895,10 +895,10 @@ export default function DetailScreen({ route, navigation }) {
                     const isMe = p.user_id === currentUserId;
                     const dist = getDistance(p.latitude, p.longitude, meetup.destination_lat, meetup.destination_lng);
                     const name = isMe ? 'Anda' : (p.profiles?.full_name || p.profiles?.username || 'Teman');
-                    
+
                     let statusText = '';
                     let statusColor = '#4F46E5'; // Indigo default
-                    
+
                     if (dist < 0.05) {
                       statusText = '📍 Sudah Tiba';
                       statusColor = '#10B981'; // Green
@@ -944,8 +944,8 @@ export default function DetailScreen({ route, navigation }) {
                 </View>
               </View>
 
-              <TouchableOpacity 
-                style={[styles.btnAction, isRefreshing && { opacity: 0.7 }]} 
+              <TouchableOpacity
+                style={[styles.btnAction, isRefreshing && { opacity: 0.7 }]}
                 onPress={fetchParticipantsLocations}
                 disabled={isRefreshing}
               >
@@ -961,7 +961,7 @@ export default function DetailScreen({ route, navigation }) {
           {/* Tab Content 2: Chat Grup */}
           {!isPanelMinimized && activeTab === 'chat' && (
             <View style={styles.chatContainer}>
-              <ScrollView 
+              <ScrollView
                 ref={scrollViewRef}
                 style={styles.chatScroll}
                 contentContainerStyle={styles.chatContent}
@@ -979,10 +979,10 @@ export default function DetailScreen({ route, navigation }) {
                     const isMe = item.user_id === currentUserId;
                     const status = getMessageReadStatus(item);
                     const senderName = item.profiles?.full_name || item.profiles?.username || 'Teman';
-                    
+
                     return (
-                      <View 
-                        key={item.id} 
+                      <View
+                        key={item.id}
                         style={[styles.messageBubbleContainer, isMe ? styles.bubbleRight : styles.bubbleLeft]}
                       >
                         {!isMe && <Text style={styles.senderLabel}>{senderName}</Text>}
@@ -1036,15 +1036,15 @@ export default function DetailScreen({ route, navigation }) {
               <View style={styles.qrModalContent}>
                 <Text style={styles.qrModalTitle}>Kode QR Meetup 📅</Text>
                 <Text style={styles.qrModalDesc}>Minta teman Anda memindai kode QR ini menggunakan kamera ponsel untuk langsung bergabung.</Text>
-                
+
                 <View style={styles.qrImageContainer}>
-                  <Image 
-                    source={{ uri: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(shareUrl)}` }} 
+                  <Image
+                    source={{ uri: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(shareUrl)}` }}
                     style={styles.qrImage}
                   />
                 </View>
 
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.btnQrClose}
                   onPress={() => setQrModalVisible(false)}
                 >
@@ -1126,19 +1126,19 @@ const styles = StyleSheet.create({
     borderColor: '#F1F5F9',
     maxHeight: Dimensions.get('window').height * 0.48,
   },
-  panelHandle: {
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#CBD5E1',
-    alignSelf: 'center',
-    marginBottom: 12,
-  },
+  // panelHandle: {
+  //   width: 36,
+  //   height: 4,
+  //   borderRadius: 2,
+  //   backgroundColor: '#CBD5E1',
+  //   alignSelf: 'center',
+  // },
   sheetTabBarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 14,
+    marginBottom: 8,
+
   },
   sheetTabBar: {
     flexDirection: 'row',
@@ -1257,7 +1257,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 15,
   },
-  
+
   // Chat Styles
   chatContainer: {
     height: Dimensions.get('window').height * 0.38,
