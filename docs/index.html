@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bergabung ke KumpulKuy</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #F8FAFC;
+            color: #0F172A;
+            text-align: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            padding: 35px 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.05);
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid #E2E8F0;
+        }
+        .logo {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        h2 { 
+            color: #4F46E5; 
+            margin: 0 0 10px 0; 
+            font-size: 24px;
+            font-weight: 800;
+        }
+        p { 
+            color: #64748B; 
+            font-size: 14px; 
+            line-height: 22px; 
+            margin: 0 0 15px 0;
+        }
+        .status-box {
+            background-color: #F1F5F9;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            color: #475569;
+            margin-top: 15px;
+            line-height: 18px;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            background-color: #4F46E5;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+            transition: background-color 0.2s;
+        }
+        .btn:active {
+            background-color: #3730A3;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">📍</div>
+        <h2>KumpulKuy</h2>
+        <p>Membuka aplikasi untuk bergabung ke acara kumpul...</p>
+        
+        <div id="status-msg" class="status-box">
+            Menghubungkan ke aplikasi KumpulKuy di ponsel Anda...
+        </div>
+        
+        <a id="btn-redirect" class="btn" href="#">Buka Aplikasi Manual</a>
+    </div>
+
+    <script>
+        // 1. Ambil ID meetup dari parameter URL (?id=xxxx)
+        const urlParams = new URLSearchParams(window.location.search);
+        const meetupId = urlParams.get('id');
+
+        if (meetupId) {
+            // Tautan tujuan ke custom scheme aplikasi KumpulKuy
+            const appLink = "kumpulkuy://join-meetup?id=" + meetupId;
+            
+            // Set link ke tombol manual
+            document.getElementById('btn-redirect').href = appLink;
+
+            // 2. Coba buka aplikasi secara otomatis
+            window.location.replace(appLink);
+
+            // 3. Tampilkan pesan instruksi jika aplikasi tidak terinstal / tidak merespons
+            setTimeout(() => {
+                document.getElementById('status-msg').innerHTML = 
+                    "Jika aplikasi belum terbuka, pastikan aplikasi <b>KumpulKuy</b> sudah terpasang di HP Anda, atau ketuk tombol manual di atas.";
+            }, 2500);
+        } else {
+            document.querySelector('.card').innerHTML = "<h2>⚠️ Error</h2><p>ID Meetup tidak valid atau tidak ditemukan.</p>";
+        }
+    </script>
+</body>
+</html>
