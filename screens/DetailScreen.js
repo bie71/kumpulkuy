@@ -1582,6 +1582,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
   },
+  modalBgCenter: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
   qrModalContent: {
     width: '80%',
     backgroundColor: '#FFFFFF',
