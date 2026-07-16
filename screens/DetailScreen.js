@@ -1260,7 +1260,7 @@ const styles = StyleSheet.create({
   
   // Chat Styles
   chatContainer: {
-    height: 180,
+    height: Dimensions.get('window').height * 0.38,
     justifyContent: 'space-between',
   },
   chatScroll: {
