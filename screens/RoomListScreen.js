@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
+import * as Linking from 'expo-linking';
 import { supabase } from '../lib/supabase';
 
 export default function RoomListScreen({ navigation }) {
@@ -55,7 +56,110 @@ export default function RoomListScreen({ navigation }) {
   useEffect(() => {
     fetchUserData();
     fetchMeetups();
+
+    // 1. Tangani URL saat aplikasi sudah terbuka di background
+    const subscription = Linking.addEventListener('url', (event) => {
+      handleDeepLink(event.url);
+    });
+
+    // 2. Tangani URL jika aplikasi dibuka dingin (cold start) dari link
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        handleDeepLink(url);
+      }
+    });
+
+    return () => {
+      if (subscription) {
+        subscription.remove();
+      }
+    };
   }, []);
+
+  async function handleDeepLink(url) {
+    try {
+      const parsed = Linking.parse(url);
+      // Format URL: kumpulkuy://join-meetup?id=UUID
+      // Atau exp://IP:PORT/--/join-meetup?id=UUID
+      if (url.includes('join-meetup') || parsed.path === 'join-meetup') {
+        const meetupId = parsed.queryParams?.id;
+        if (meetupId) {
+          promptJoinMeetup(meetupId);
+        }
+      }
+    } catch (err) {
+      console.log('Error parsing deep link:', err.message);
+    }
+  }
+
+  async function promptJoinMeetup(meetupId) {
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        Alert.alert('Autentikasi Diperlukan 🔑', 'Silakan masuk ke akun Anda terlebih dahulu sebelum bergabung.');
+        return;
+      }
+
+      // Fetch details untuk judul
+      const { data: meetup, error } = await supabase
+        .from('meetups')
+        .select('*, meetup_participants(user_id)')
+        .eq('id', meetupId)
+        .single();
+
+      if (error) throw error;
+
+      if (!meetup) {
+        Alert.alert('Error ⚠️', 'Acara kumpul tidak ditemukan.');
+        return;
+      }
+
+      const isParticipant = meetup.meetup_participants?.some(p => p.user_id === user.id);
+      if (isParticipant) {
+        // Jika sudah bergabung, langsung arahkan ke DetailScreen
+        navigation.navigate('Detail', { meetup });
+        return;
+      }
+
+      Alert.alert(
+        'Undangan Gabung Meetup 📅',
+        `Apakah Anda ingin bergabung ke meetup "${meetup.title}" di "${meetup.destination_address}"?`,
+        [
+          { text: 'Batal', style: 'cancel' },
+          {
+            text: 'Gabung',
+            onPress: async () => {
+              setLoading(true);
+              try {
+                const { error: joinError } = await supabase
+                  .from('meetup_participants')
+                  .insert({
+                    meetup_id: meetupId,
+                    user_id: user.id,
+                    status: 'joined',
+                  });
+
+                if (joinError) throw joinError;
+
+                Alert.alert('Sukses 🎉', 'Berhasil bergabung ke meetup!');
+                fetchMeetups();
+                navigation.navigate('Detail', { meetup });
+              } catch (err) {
+                Alert.alert('Gagal Bergabung ⚠️', err.message);
+              } finally {
+                setLoading(false);
+              }
+            }
+          }
+        ]
+      );
+    } catch (err) {
+      Alert.alert('Error ⚠️', 'Gagal memproses link undangan: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   // Memantau meetup terdekat dalam waktu 2 jam ke depan
   useEffect(() => {

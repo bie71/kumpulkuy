@@ -13,7 +13,11 @@ import {
     TextInput,
     TouchableOpacity,
     View,
+    Share,
+    Modal,
+    Image,
 } from 'react-native';
+import * as Linking from 'expo-linking';
 import { WebView } from 'react-native-webview';
 import { supabase } from '../lib/supabase';
 
@@ -38,11 +42,28 @@ export default function DetailScreen({ route, navigation }) {
   // States baru untuk Notifikasi & Pengingat
   const [notification, setNotification] = useState(null);
   const [reminder, setReminder] = useState(null);
+  const [qrModalVisible, setQrModalVisible] = useState(false);
   const bannerAnim = useRef(new Animated.Value(-120)).current;
 
   const locationSubscription = useRef(null);
   const webViewRef = useRef(null);
   const scrollViewRef = useRef(null);
+
+  const shareUrl = Linking.createURL('join-meetup', {
+    queryParams: { id: meetup.id },
+  });
+
+  async function handleShareLink() {
+    try {
+      const message = `Yuk gabung ke acara meetup "${meetup.title}" di "${meetup.destination_address}"!\n\nKlik tautan ini untuk langsung bergabung dan melacak posisi kami secara real-time:\n${shareUrl}`;
+      await Share.share({
+        message,
+        title: `Undangan Meetup: ${meetup.title}`,
+      });
+    } catch (error) {
+      console.log('Error sharing meetup link:', error.message);
+    }
+  }
 
   // Refs untuk mencegah stale closure di realtime subscription
   const currentUserIdRef = useRef(null);
@@ -898,6 +919,22 @@ export default function DetailScreen({ route, navigation }) {
                 </View>
               )}
 
+              {/* Share & Invite Section */}
+              <View style={styles.shareSectionCard}>
+                <Text style={styles.shareSectionTitle}>Undang Teman Bergabung 🤝</Text>
+                <Text style={styles.shareSectionDesc}>
+                  Bagikan tautan atau tunjukkan kode QR di bawah agar teman Anda dapat otomatis bergabung dan melacak perjalanan.
+                </Text>
+                <View style={styles.shareButtonsRow}>
+                  <TouchableOpacity style={styles.btnShareLink} onPress={handleShareLink}>
+                    <Text style={styles.btnShareLinkText}>🔗 Bagikan Tautan</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.btnShowQr} onPress={() => setQrModalVisible(true)}>
+                    <Text style={styles.btnShowQrText}>🔍 Tampilkan QR</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
               <TouchableOpacity 
                 style={[styles.btnAction, isRefreshing && { opacity: 0.7 }]} 
                 onPress={fetchParticipantsLocations}
@@ -979,6 +1016,34 @@ export default function DetailScreen({ route, navigation }) {
               </View>
             </View>
           )}
+          {/* Modal QR Code */}
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={qrModalVisible}
+            onRequestClose={() => setQrModalVisible(false)}
+          >
+            <View style={styles.modalBgCenter}>
+              <View style={styles.qrModalContent}>
+                <Text style={styles.qrModalTitle}>Kode QR Meetup 📅</Text>
+                <Text style={styles.qrModalDesc}>Minta teman Anda memindai kode QR ini menggunakan kamera ponsel untuk langsung bergabung.</Text>
+                
+                <View style={styles.qrImageContainer}>
+                  <Image 
+                    source={{ uri: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(shareUrl)}` }} 
+                    style={styles.qrImage}
+                  />
+                </View>
+
+                <TouchableOpacity 
+                  style={styles.btnQrClose}
+                  onPress={() => setQrModalVisible(false)}
+                >
+                  <Text style={styles.btnQrCloseText}>Tutup</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </View>
       </KeyboardAvoidingView>
     </View>
@@ -1459,5 +1524,111 @@ const styles = StyleSheet.create({
     color: '#3730A3',
     fontWeight: '700',
     textAlign: 'center',
+  },
+  shareSectionCard: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 14,
+    padding: 14,
+    marginVertical: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  shareSectionTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginBottom: 4,
+  },
+  shareSectionDesc: {
+    fontSize: 11,
+    color: '#64748B',
+    lineHeight: 16,
+    marginBottom: 10,
+  },
+  shareButtonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  btnShareLink: {
+    flex: 0.58,
+    backgroundColor: '#4F46E5',
+    borderRadius: 10,
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  btnShareLinkText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  btnShowQr: {
+    flex: 0.38,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#E2E8F0',
+    borderWidth: 1.5,
+    borderRadius: 10,
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnShowQrText: {
+    color: '#334155',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  qrModalContent: {
+    width: '80%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 24,
+    alignItems: 'center',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 5,
+  },
+  qrModalTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginBottom: 6,
+  },
+  qrModalDesc: {
+    fontSize: 12,
+    color: '#64748B',
+    textAlign: 'center',
+    lineHeight: 16,
+    marginBottom: 20,
+  },
+  qrImageContainer: {
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: '#F1F5F9',
+    marginBottom: 20,
+  },
+  qrImage: {
+    width: 180,
+    height: 180,
+  },
+  btnQrClose: {
+    width: '100%',
+    backgroundColor: '#F1F5F9',
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  btnQrCloseText: {
+    color: '#334155',
+    fontSize: 14,
+    fontWeight: '700',
   },
 });
