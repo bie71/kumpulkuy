@@ -273,7 +273,7 @@ export default function LoginScreen() {
           ) : (
             <TouchableOpacity style={styles.btnPrimary} onPress={handleAuth}>
               <Text style={styles.btnPrimaryText}>
-                {isRegisterMode ? '📝 Daftar Sekarang' : '🔑 Masuk Sekarang'}
+                {isRegisterMode ? 'Daftar Sekarang' : 'Masuk Sekarang'}
               </Text>
             </TouchableOpacity>
           )}
