@@ -12,7 +12,11 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
 import { supabase } from '../lib/supabase';
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -135,6 +139,67 @@ export default function LoginScreen() {
         triggerShake();
         setLoading(false);
       }
+    }
+  }
+
+  async function handleGoogleLogin() {
+    setLoading(true);
+    setGeneralError('');
+    try {
+      const redirectUrl = Linking.createURL('/welcome');
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl,
+          skipBrowserRedirect: true,
+        },
+      });
+
+      if (error) throw error;
+
+      const res = await WebBrowser.openAuthSessionAsync(data?.url ?? '', redirectUrl);
+
+      if (res.type === 'success') {
+        const { url } = res;
+        const params = {};
+        const queryIndex = url.indexOf('?');
+        const hashIndex = url.indexOf('#');
+        let searchString = '';
+        if (queryIndex !== -1) {
+          searchString = url.substring(queryIndex + 1);
+        } else if (hashIndex !== -1) {
+          searchString = url.substring(hashIndex + 1);
+        }
+
+        if (searchString) {
+          const pairs = searchString.split('&');
+          pairs.forEach(pair => {
+            const [key, value] = pair.split('=');
+            if (key && value) {
+              params[decodeURIComponent(key)] = decodeURIComponent(value);
+            }
+          });
+        }
+
+        const accessToken = params.access_token;
+        const refreshToken = params.refresh_token;
+
+        if (accessToken && refreshToken) {
+          const { error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+          if (sessionError) throw sessionError;
+        } else {
+          throw new Error('Gagal mendapatkan sesi login dari Google.');
+        }
+      }
+    } catch (err) {
+      setGeneralError(err.message || 'Gagal masuk dengan Google.');
+      triggerShake();
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -271,11 +336,26 @@ export default function LoginScreen() {
               <Text style={styles.loaderText}>Memproses autentikasi...</Text>
             </View>
           ) : (
-            <TouchableOpacity style={styles.btnPrimary} onPress={handleAuth}>
-              <Text style={styles.btnPrimaryText}>
-                {isRegisterMode ? 'Daftar Sekarang' : 'Masuk Sekarang'}
-              </Text>
-            </TouchableOpacity>
+            <>
+              <TouchableOpacity style={styles.btnPrimary} onPress={handleAuth}>
+                <Text style={styles.btnPrimaryText}>
+                  {isRegisterMode ? 'Daftar Sekarang' : 'Masuk Sekarang'}
+                </Text>
+              </TouchableOpacity>
+
+              {/* OR Divider */}
+              <View style={styles.dividerRow}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.dividerText}>ATAU</Text>
+                <View style={styles.dividerLine} />
+              </View>
+
+              {/* Google Sign In Button */}
+              <TouchableOpacity style={styles.btnGoogle} onPress={handleGoogleLogin}>
+                <Text style={styles.btnGoogleIcon}>🌐</Text>
+                <Text style={styles.btnGoogleText}>Masuk dengan Google</Text>
+              </TouchableOpacity>
+            </>
           )}
         </Animated.View>
 
@@ -497,5 +577,46 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 18,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E2E8F0',
+  },
+  dividerText: {
+    fontSize: 12,
+    color: '#94A3B8',
+    fontWeight: '700',
+    marginHorizontal: 12,
+  },
+  btnGoogle: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#E2E8F0',
+    borderWidth: 1.5,
+    borderRadius: 12,
+    paddingVertical: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 4,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  btnGoogleIcon: {
+    fontSize: 18,
+    marginRight: 8,
+  },
+  btnGoogleText: {
+    color: '#334155',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
