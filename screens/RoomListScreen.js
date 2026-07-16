@@ -564,7 +564,7 @@ export default function RoomListScreen({ navigation }) {
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btnLogout} onPress={() => supabase.auth.signOut()}>
-          <Text style={styles.btnLogoutText}>Keluar</Text>
+          <Text style={styles.btnLogoutText}>🚪 Keluar</Text>
         </TouchableOpacity>
       </View>
 
