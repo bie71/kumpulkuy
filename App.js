@@ -61,7 +61,7 @@ export default function App() {
               <Stack.Screen 
                 name="RoomList" 
                 component={RoomListScreen} 
-                options={{ title: 'Daftar Meetup' }}
+                options={{ title: '📅 Daftar Meetup' }}
               />
               <Stack.Screen 
                 name="Detail" 

@@ -547,13 +547,22 @@ export default function RoomListScreen({ navigation }) {
 
       {/* Header Container */}
       <View style={styles.header}>
-        <View style={styles.headerProfile}>
-          <Text style={styles.welcomeText}>Selamat Datang 👋</Text>
-          <TouchableOpacity onPress={() => setProfileModalVisible(true)} style={styles.profileBtn}>
-            <Text style={styles.userEmailText}>{displayName || 'Kawan Kumpul'}</Text>
-            <Text style={styles.editProfileTag}>✏️ Edit Nama</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity 
+          style={styles.headerProfileRow} 
+          onPress={() => setProfileModalVisible(true)}
+          activeOpacity={0.8}
+        >
+          <View style={styles.avatarCircle}>
+            <Text style={styles.avatarText}>🧑‍💻</Text>
+          </View>
+          <View style={styles.headerProfileTextContainer}>
+            <Text style={styles.welcomeText}>Selamat Datang 👋</Text>
+            <View style={styles.nameRow}>
+              <Text style={styles.userEmailText}>{displayName || 'Kawan Kumpul'}</Text>
+              <Text style={styles.editProfileIcon}>✏️</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.btnLogout} onPress={() => supabase.auth.signOut()}>
           <Text style={styles.btnLogoutText}>Keluar</Text>
         </TouchableOpacity>
@@ -561,7 +570,10 @@ export default function RoomListScreen({ navigation }) {
 
       {/* Title */}
       <View style={styles.titleContainer}>
-        <Text style={styles.titleText}>Meetup KumpulKuy</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.titleIcon}>🗺️</Text>
+          <Text style={styles.titleText}>Meetup KumpulKuy</Text>
+        </View>
         <Text style={styles.subTitleText}>Pilih acara untuk melacak dan berkumpul dengan teman Anda</Text>
       </View>
 
@@ -610,19 +622,19 @@ export default function RoomListScreen({ navigation }) {
             style={[styles.listFilterTab, activeFilter === 'all' && styles.listFilterTabActive]}
             onPress={() => setActiveFilter('all')}
           >
-            <Text style={[styles.listFilterTabText, activeFilter === 'all' && styles.listFilterTabTextActive]}>Semua</Text>
+            <Text style={[styles.listFilterTabText, activeFilter === 'all' && styles.listFilterTabTextActive]}>🌐 Semua</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={[styles.listFilterTab, activeFilter === 'mine' && styles.listFilterTabActive]}
             onPress={() => setActiveFilter('mine')}
           >
-            <Text style={[styles.listFilterTabText, activeFilter === 'mine' && styles.listFilterTabTextActive]}>Meetup Saya</Text>
+            <Text style={[styles.listFilterTabText, activeFilter === 'mine' && styles.listFilterTabTextActive]}>👥 Meetup Saya</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={[styles.listFilterTab, activeFilter === 'upcoming' && styles.listFilterTabActive]}
             onPress={() => setActiveFilter('upcoming')}
           >
-            <Text style={[styles.listFilterTabText, activeFilter === 'upcoming' && styles.listFilterTabTextActive]}>Mendatang</Text>
+            <Text style={[styles.listFilterTabText, activeFilter === 'upcoming' && styles.listFilterTabTextActive]}>📅 Mendatang</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -978,31 +990,51 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingTop: 0,
-    top: -10,
-    paddingBottom: 16,
+    top: -20,
+    paddingBottom: 4,
   },
-  headerProfile: {
+  headerProfileRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
   },
-  profileBtn: {
+  avatarCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#EEF2FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    borderWidth: 1.5,
+    borderColor: '#E0E7FF',
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  avatarText: {
+    fontSize: 20,
+  },
+  headerProfileTextContainer: {
+    flex: 1,
+  },
+  nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 2,
   },
-  editProfileTag: {
-    fontSize: 11,
+  editProfileIcon: {
+    fontSize: 12,
+    marginLeft: 6,
     color: '#4F46E5',
-    fontWeight: '700',
-    backgroundColor: '#EEF2FF',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
-    marginLeft: 8,
+    opacity: 0.8,
   },
   welcomeText: {
-    fontSize: 18,
+    fontSize: 14,
     color: '#64748B',
-    fontWeight: '700',
+    fontWeight: '600',
   },
   userEmailText: {
     fontSize: 16,
@@ -1026,6 +1058,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     marginBottom: 16,
     marginTop: 8,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  titleIcon: {
+    fontSize: 28,
+    marginRight: 10,
   },
   titleText: {
     fontSize: 26,
