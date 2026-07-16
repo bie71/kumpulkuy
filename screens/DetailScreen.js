@@ -1,3 +1,4 @@
+import * as Linking from 'expo-linking';
 import * as Location from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -18,7 +19,6 @@ import {
     View,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
-import * as Linking from 'expo-linking';
 import { supabase } from '../lib/supabase';
 
 export default function DetailScreen({ route, navigation }) {
@@ -1354,6 +1354,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#F1F5F9',
     paddingTop: 8,
+    paddingBottom: 10,
   },
   chatTextInput: {
     flex: 1,
