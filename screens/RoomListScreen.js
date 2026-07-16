@@ -104,7 +104,7 @@ export default function RoomListScreen({ navigation }) {
       // Fetch details untuk judul
       const { data: meetup, error } = await supabase
         .from('meetups')
-        .select('*, meetup_participants(user_id)')
+        .select('*, meetup_participants(user_id), profiles!created_by(full_name, username)')
         .eq('id', meetupId)
         .single();
 
@@ -245,7 +245,7 @@ export default function RoomListScreen({ navigation }) {
     setLoading(true);
     const { data, error } = await supabase
       .from('meetups')
-      .select('*, meetup_participants(user_id)')
+      .select('*, meetup_participants(user_id), profiles!created_by(full_name, username)')
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -391,6 +391,29 @@ export default function RoomListScreen({ navigation }) {
     }
   }
 
+  async function handleReverseGeocode(lat, lng) {
+    setAddress('Mencari alamat...');
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+        {
+          headers: {
+            'User-Agent': 'KumpulKuyApp/1.0',
+          },
+        }
+      );
+      const data = await response.json();
+      if (data && data.display_name) {
+        setAddress(data.display_name);
+      } else {
+        setAddress(`${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+      }
+    } catch (err) {
+      console.log('Error reverse geocoding:', err.message);
+      setAddress(`${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+    }
+  }
+
   async function openMapPicker() {
     setModalVisible(true);
     setFetchingLocation(true);
@@ -403,9 +426,12 @@ export default function RoomListScreen({ navigation }) {
       }
 
       const loc = await Location.getCurrentPositionAsync({});
-      setLatitude(loc.coords.latitude);
-      setLongitude(loc.coords.longitude);
-      setAddress('Lokasi Saya');
+      const lat = loc.coords.latitude;
+      const lng = loc.coords.longitude;
+      setLatitude(lat);
+      setLongitude(lng);
+      setAddress('Mencari alamat lokasi...');
+      handleReverseGeocode(lat, lng);
     } catch (err) {
       console.log('Error getting location for picker:', err.message);
     } finally {
@@ -419,6 +445,7 @@ export default function RoomListScreen({ navigation }) {
       if (msg.type === 'LOCATION_SELECTED') {
         setLatitude(msg.latitude);
         setLongitude(msg.longitude);
+        handleReverseGeocode(msg.latitude, msg.longitude);
       }
     } catch (err) {
       console.log('Error parsing web message:', err.message);
@@ -625,9 +652,11 @@ export default function RoomListScreen({ navigation }) {
   `;
 
   const filteredMeetups = meetups.filter((item) => {
+    const creatorName = item.profiles?.full_name || item.profiles?.username || '';
     const matchesSearch = 
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.destination_address.toLowerCase().includes(searchQuery.toLowerCase());
+      item.destination_address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      creatorName.toLowerCase().includes(searchQuery.toLowerCase());
 
     if (!matchesSearch) return false;
 
@@ -809,6 +838,9 @@ export default function RoomListScreen({ navigation }) {
                         hour: '2-digit',
                         minute: '2-digit',
                       })} WIB
+                    </Text>
+                    <Text style={styles.cardCreator}>
+                      👤 Pembuat: {item.profiles?.full_name || item.profiles?.username || 'Kawan Kumpul'}
                     </Text>
                   </View>
                 </View>
@@ -1257,6 +1289,12 @@ const styles = StyleSheet.create({
   cardTime: {
     fontSize: 12,
     color: '#4F46E5',
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  cardCreator: {
+    fontSize: 12,
+    color: '#64748B',
     fontWeight: '600',
     marginTop: 2,
   },
